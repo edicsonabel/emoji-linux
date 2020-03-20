@@ -11,6 +11,15 @@ nameConf='90-noto-color-emoji.conf'
 fileError='/tmp/.noto-err.log'
 flagCache='/tmp/cache.ready'
 next=true
+notoUpdate=false
+
+while [ -n "$1" ]; do # while loop starts
+  case "$1" in
+    -u|--update) notoUpdate=true ;;
+    *) echo "Option $1 not recognized" ;;
+  esac
+  shift
+done
 
 show_err(){
   if [ -s ${fileError} ]; then
@@ -71,14 +80,14 @@ main(){
     fi
   fi
 
-  if "${next}" ; then
+  if "${next}" && "${notoUpdate}" ; then
     # Updating 'Noto Color Emoji'
     if [ -f "./${notoFont}" ]; then
       echo "${BLUE}${BOLD}Copying${RESET} ${YELLOW}./${notoFont}${RESET} ${BLUE}${BOLD}to${RESET} ${YELLOW}${notoFolder}${RESET}"
       sudo cp "./${notoFont}" "${notoFolder}" 2>> ${fileError}
       echo
       show_err "${RED}${BOLD}Error Copying${RESET} ${YELLOW}'./${notoFont}'${RESET}";
-    else 
+    else
       echo "${BLUE}${BOLD}Downloading${RESET} ${YELLOW}${notoFont}${RESET} ${BLUE}${BOLD}updated to${RESET} ${YELLOW}${notoFolder}${RESET}"
       sudo wget "$notoGit" -O "${notoFolder}/${notoFont}"
       echo
